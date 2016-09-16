@@ -35,6 +35,7 @@ namespace kOS.Suffixed.PartModuleField
             AddSuffix("RERUNNABLE", new Suffix<BooleanValue>(() => Rerunnable(), "Is this experiment rerunnable"));
             AddSuffix("HASDATA", new Suffix<BooleanValue>(() => HasData(), "Does this experiment have any data stored"));
             AddSuffix("DATA", new Suffix<ListValue>(Data, "Does this experiment have any data stored"));
+            AddSuffix("PROCESS", new NoArgsVoidSuffix(ProcessData, "Send experiment data to a lab to be processed"));
         }
 
         public abstract bool Deployed();
@@ -65,6 +66,8 @@ namespace kOS.Suffixed.PartModuleField
         }
 
         public abstract void TransmitData();
+
+        public abstract void ProcessData();
 
         public new string ToString()
         {

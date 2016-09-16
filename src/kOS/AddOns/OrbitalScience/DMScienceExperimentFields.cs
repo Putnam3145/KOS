@@ -98,5 +98,40 @@ namespace kOS.AddOns.OrbitalScience
             else
                 ScreenMessages.PostScreenMessage("No transmitters available on this vessel or no data to transmit.", 4f, ScreenMessageStyle.UPPER_LEFT);
         }
+        public override void ProcessData()
+        {
+            ThrowIfNotCPUVessel();
+
+            IScienceDataContainer container = partModule as IScienceDataContainer;
+
+            ScienceData[] data = container.GetData();
+
+
+            //Note: I am still a beginner at C#; the below line may horrify you (or maybe not).
+            List<ModuleScienceLab> labList = partModule.vessel.parts.Where(p => p.Modules.OfType<ModuleScienceLab>().Any()) as List<ModuleScienceLab>;
+
+            if (labList.Count() > 0 && data.Count() > 0)
+            {
+                foreach (ScienceData datum in data)
+                {
+                    ModuleScienceLab bestLab = labList.FirstOrDefault();
+                    float bestBoost = -1;
+                    foreach (ModuleScienceLab lab in labList)
+                    {
+                        float labBoost = lab.GetBoostForData(datum);
+                        if (labBoost > bestBoost)
+                        {
+                            bestLab = lab;
+                            bestBoost = labBoost;
+                        }
+                    }
+                    bestLab.ProcessData(datum);
+                }
+
+                DumpData();
+            }
+            else
+                ScreenMessages.PostScreenMessage("No labs available on this vessel or no data to process.", 4f, ScreenMessageStyle.UPPER_LEFT);
+        }
     }
 }
